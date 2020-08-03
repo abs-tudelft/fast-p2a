@@ -56,11 +56,17 @@ std::shared_ptr<arrow::RecordBatch> prepareRecordBatch(uint32_t num_strings, uin
   std::shared_ptr<arrow::Buffer> values;
   std::shared_ptr<arrow::Buffer> offsets;
 
-  if (!arrow::AllocateBuffer(arrow::default_memory_pool(), num_chars, &values).ok()) {
+  arrow::Result<std::shared_ptr<arrow::Buffer>> bufResult = arrow::AllocateBuffer(num_chars);
+  if (bufResult.ok()) {
+	  values = bufResult.ValueOrDie();
+  } else {
     throw std::runtime_error("Could not allocate values buffer.");
   }
 
-  if (!arrow::AllocateBuffer(arrow::default_memory_pool(), sizeof(int32_t)*(num_strings+1), &offsets).ok()) {
+  bufResult = arrow::AllocateBuffer(sizeof(int32_t)*(num_strings+1));
+  if (bufResult.ok()) {
+	offsets = bufResult.ValueOrDie();
+  } else {
     throw std::runtime_error("Could not allocate offsets buffer.");
   }
 
@@ -268,7 +274,7 @@ int main(int argc, char **argv) {
 
   t.start();
   kernel.Start();
-  kernel.WaitForFinish(1);
+  kernel.PollUntilDoneInterval(10);
   t.stop();
   std::cout << "FPGA processing time             : "
             << t.seconds() << std::endl;

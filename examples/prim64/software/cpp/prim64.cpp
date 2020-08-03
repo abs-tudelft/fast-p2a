@@ -52,7 +52,10 @@
 std::shared_ptr<arrow::RecordBatch> prepareRecordBatch(uint32_t num_val) {
   std::shared_ptr<arrow::Buffer> values;
 
-  if (!arrow::AllocateBuffer(arrow::default_memory_pool(), sizeof(int64_t)*num_val, &values).ok()) {
+  arrow::Result<std::shared_ptr<arrow::Buffer>> bufResult = arrow::AllocateBuffer(sizeof(int64_t)*num_val);
+  if (bufResult.ok()) {
+	  values = bufResult.ValueOrDie();
+  } else {
     throw std::runtime_error("Could not allocate values buffer.");
   }
 
@@ -102,7 +105,7 @@ void checkMMIO(std::shared_ptr<fletcher::Platform> platform, uint32_t num_val) {
 //Only works for Parquet version 1 style files.
 std::shared_ptr<arrow::ChunkedArray> readArray(std::string hw_input_file_path) {
   std::shared_ptr<arrow::io::ReadableFile> infile;
-  arrow::Result<std::shared_ptr<arrow::io::ReadableFile>> result = arrow::io::ReadableFile::Open(hw_input_file_path, arrow::default_memory_pool());
+  arrow::Result<std::shared_ptr<arrow::io::ReadableFile>> result = arrow::io::ReadableFile::Open(hw_input_file_path);
   if (result.ok()) {
     infile = result.ValueOrDie();
   } else {
@@ -250,7 +253,7 @@ int main(int argc, char **argv) {
 
   t.start();
   kernel.Start();
-  kernel.WaitForFinish(1);
+  kernel.PollUntilDoneInterval(10);
   t.stop();
   std::cout << "FPGA processing time             : "
             << t.seconds() << std::endl;
