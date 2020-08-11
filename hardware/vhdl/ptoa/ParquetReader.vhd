@@ -169,7 +169,7 @@ begin
       BUS_ADDR_WIDTH      => BUS_ADDR_WIDTH,
       BUS_LEN_WIDTH       => BUS_LEN_WIDTH,
       BUS_BURST_MAX_LEN   => BUS_BURST_MAX_LEN,
-      BUS_FIFO_DEPTH      => 8*BUS_BURST_MAX_LEN
+      BUS_FIFO_DEPTH      => 16*BUS_BURST_MAX_LEN
     )
     port map(
       clk                 => clk,
@@ -244,7 +244,7 @@ begin
       BUS_DATA_WIDTH              => BUS_DATA_WIDTH,
       BUS_ADDR_WIDTH              => BUS_ADDR_WIDTH,
       INDEX_WIDTH                 => INDEX_WIDTH,
-      MIN_INPUT_BUFFER_DEPTH      => 16,
+      MIN_INPUT_BUFFER_DEPTH      => 32,
       CMD_TAG_WIDTH               => TAG_WIDTH,
       CFG                         => CFG,
       ENCODING                    => ENCODING,
