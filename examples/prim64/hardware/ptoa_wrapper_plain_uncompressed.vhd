@@ -229,7 +229,7 @@ begin
       BUS_LEN_WIDTH                            => BUS_LEN_WIDTH,
       BUS_DATA_WIDTH                           => BUS_DATA_WIDTH,
       NUM_SLAVE_PORTS                          => 1,
-      MAX_OUTSTANDING                          => 16
+      MAX_OUTSTANDING                          => 32
     )
     port map (
       bcd_clk                                  => bus_clk,
@@ -261,7 +261,7 @@ begin
       BUS_LEN_WIDTH                            => BUS_LEN_WIDTH,
       BUS_DATA_WIDTH                           => BUS_DATA_WIDTH,
       NUM_SLAVE_PORTS                          => 1,
-      MAX_OUTSTANDING                          => 16
+      MAX_OUTSTANDING                          => 32
     )
     port map (
       bcd_clk                                  => bus_clk,
