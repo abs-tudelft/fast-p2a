@@ -189,8 +189,8 @@ begin
       ---------------------------------------------------------------------------------
       TAG_WIDTH                                => TAG_WIDTH,
       CFG                                      => "prim(64;epc=8)",
-      ENCODING                                 => "DELTA",
-      COMPRESSION_CODEC                        => "UNCOMPRESSED"
+      ENCODING                                 => "PLAIN",
+      COMPRESSION_CODEC                        => "SNAPPY"
     )
     port map(
       clk                                      => bus_clk,

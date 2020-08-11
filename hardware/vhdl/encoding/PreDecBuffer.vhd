@@ -52,8 +52,8 @@ entity PreDecBuffer is
     dcmp_ready                  : in  std_logic;
 
     -- Decoder "new page" handshake
-    dcod_valid                  : out std_logic;
-    dcod_ready                  : in  std_logic;
+--    dcod_valid                  : out std_logic;
+--    dcod_ready                  : in  std_logic;
 
     -- Compressed size of values in page (from MetadataInterpreter)
     compressed_size             : in  std_logic_vector(31 downto 0);
@@ -73,7 +73,7 @@ end PreDecBuffer;
 architecture behv of PreDecBuffer is
 
   type top_state_t       is (PAGE_START, IN_PAGE, PAGE_END);
-  type handshake_state_t is (DECOMPRESSOR, DECODER, DONE);
+  type handshake_state_t is (DECOMPRESSOR, DONE);
 
   type reg_record is record 
     top_state               : top_state_t;
@@ -106,13 +106,12 @@ begin
     out_data        => out_data
   );
   
-  logic_p: process (r, in_valid, in_ready_buf, compressed_size, bc_ready, dcod_ready, dcmp_ready)
+  logic_p: process (r, in_valid, in_ready_buf, compressed_size, bc_ready, dcmp_ready)
     variable v : reg_record;
   begin
     v := r;
 
     dcmp_valid <= '0';
-    dcod_valid <= '0';
     in_ready <= '0';
     in_valid_buf <= '0';
     bc_valid <= '0';
@@ -163,14 +162,8 @@ begin
       when DECOMPRESSOR =>
         dcmp_valid <= '1';
         if dcmp_ready = '1' then
-          v.handshake_state := DECODER;
+          v.handshake_state := DONE;
         end if;
-
-      when DECODER =>
-          dcod_valid <= '1';
-          if dcod_ready = '1' then
-            v.handshake_state := DONE;
-          end if;
 
       when others =>
 

@@ -42,13 +42,15 @@ entity DecompressorWrapper is
     in_ready                    : out std_logic;
     in_data                     : in  std_logic_vector(BUS_DATA_WIDTH-1 downto 0);
 
-    -- Handshake signaling new page
-    new_page_valid              : in  std_logic;
-    new_page_ready              : out std_logic;
+    -- Handshake signaling new page from input (PreDecBuffer)
+    newpage_in_valid            : in  std_logic;
+    newpage_in_ready            : out std_logic;
+    newpage_in_data             : in std_logic_vector(3 * 32 - 1 downto 0); 
 
-    -- Compressed and uncompressed size of values in page (from MetadataInterpreter)
-    compressed_size             : in  std_logic_vector(31 downto 0);
-    uncompressed_size           : in  std_logic_vector(31 downto 0);
+    -- Handshake signaling new page to output (ValuesDecoder)
+    newpage_out_valid           : out std_logic;
+    newpage_out_ready           : in  std_logic;
+    newpage_out_data             : out std_logic_vector(3 * 32 - 1 downto 0); 
 
     --Data out stream to Fletcher ArrayWriter
     out_valid                   : out std_logic;
@@ -61,10 +63,12 @@ architecture behv of DecompressorWrapper is
 
 begin
   uncompressed_gen: if COMPRESSION_CODEC = "UNCOMPRESSED" generate
-    in_ready       <= out_ready;
-    out_valid      <= in_valid;
-    out_data       <= in_data;
-    new_page_ready <= '1';
+    in_ready          <= out_ready;
+    out_valid         <= in_valid;
+    out_data          <= in_data;
+    newpage_out_valid <= newpage_in_valid;
+    newpage_in_ready  <= newpage_out_ready;
+    newpage_out_data   <= newpage_in_data;
   end generate;
 
   snappy_gen: if COMPRESSION_CODEC = "SNAPPY" generate
@@ -78,10 +82,12 @@ begin
         in_valid                    => in_valid,
         in_ready                    => in_ready,
         in_data                     => in_data,
-        new_page_valid              => new_page_valid,
-        new_page_ready              => new_page_ready,
-        compressed_size             => compressed_size,
-        uncompressed_size           => uncompressed_size,
+        newpage_in_valid            => newpage_in_valid,
+        newpage_in_ready            => newpage_in_ready,
+        newpage_in_data             => newpage_in_data,
+        newpage_out_valid           => newpage_out_valid,
+        newpage_out_ready           => newpage_out_ready,
+        newpage_out_data            => newpage_out_data,
         out_valid                   => out_valid,
         out_ready                   => out_ready,
         out_data                    => out_data

@@ -132,9 +132,7 @@ architecture behv of ValuesDecoder is
     signal state, state_next : state_t;
   
   -- New page handshake signals
-  signal page_dcod_valid       : std_logic;
   signal page_dcmp_valid       : std_logic;
-  signal page_dcod_ready       : std_logic;
   signal page_dcmp_ready       : std_logic;
 
   -- PreDecBuffer to Decompressor stream
@@ -146,6 +144,9 @@ architecture behv of ValuesDecoder is
   signal dcmp_to_dcod_valid     : std_logic;
   signal dcmp_to_dcod_ready     : std_logic;
   signal dcmp_to_dcod_data      : std_logic_vector(BUS_DATA_WIDTH-1 downto 0);
+  signal dcmp_to_dcod_newpage_valid     : std_logic;
+  signal dcmp_to_dcod_newpage_ready     : std_logic;
+  signal dcmp_to_dcod_newpage_data      : std_logic_vector(3*32-1 downto 0);
 
 begin
 
@@ -163,8 +164,6 @@ begin
       in_data                     => in_data,
       dcmp_valid                  => page_dcmp_valid,
       dcmp_ready                  => page_dcmp_ready,
-      dcod_valid                  => page_dcod_valid,
-      dcod_ready                  => page_dcod_ready,
       compressed_size             => compressed_size,
       bc_data                     => bc_data,
       bc_ready                    => bc_ready,
@@ -185,10 +184,14 @@ begin
       in_valid                    => buf_to_dcmp_valid,
       in_ready                    => buf_to_dcmp_ready,
       in_data                     => buf_to_dcmp_data,
-      new_page_valid              => page_dcmp_valid,
-      new_page_ready              => page_dcmp_ready,
-      compressed_size             => compressed_size,
-      uncompressed_size           => uncompressed_size,
+--      compressed_size             => compressed_size,
+--      uncompressed_size           => uncompressed_size,
+      newpage_in_valid            => page_dcmp_valid,
+      newpage_in_ready            => page_dcmp_ready,
+      newpage_in_data             => page_num_values & compressed_size & uncompressed_size,
+      newpage_out_valid           => dcmp_to_dcod_newpage_valid,
+      newpage_out_ready           => dcmp_to_dcod_newpage_ready,
+      newpage_out_data            => dcmp_to_dcod_newpage_data,
       out_valid                   => dcmp_to_dcod_valid,
       out_ready                   => dcmp_to_dcod_ready,
       out_data                    => dcmp_to_dcod_data
@@ -209,11 +212,11 @@ begin
       in_valid                    => dcmp_to_dcod_valid,
       in_ready                    => dcmp_to_dcod_ready,
       in_data                     => dcmp_to_dcod_data,
-      new_page_valid              => page_dcod_valid,
-      new_page_ready              => page_dcod_ready,
+      new_page_valid              => dcmp_to_dcod_newpage_valid,
+      new_page_ready              => dcmp_to_dcod_newpage_ready,
       total_num_values            => total_num_values,
-      page_num_values             => page_num_values,
-      uncompressed_size           => uncompressed_size,
+      page_num_values             => dcmp_to_dcod_newpage_data(3*32-1 downto 2*32),
+      uncompressed_size           => dcmp_to_dcod_newpage_data(31 downto 0),
       out_valid                   => out_valid,
       out_ready                   => out_ready,
       out_last                    => out_last,
