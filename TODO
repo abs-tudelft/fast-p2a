@@ -1,0 +1,4 @@
+The snappy decompressor is working in simulation, but not in hardware.
+Passthrough (decompressor disabled) is working.
+=> Figure out why
+=> Improve serialization/deserialization for different bus/decompressor interface widths
