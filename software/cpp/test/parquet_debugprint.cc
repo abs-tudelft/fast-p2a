@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
 	std::stringstream ss;
 	std::list<int> columns;
 	parquet::ParquetFilePrinter printer(reader.get());
-	printer.DebugPrint(ss, collist, true, true, true,
+	printer.DebugPrint(ss, collist, false, true, true,
 			argv[1]);
 	std::cout << ss.str();
   return 0;

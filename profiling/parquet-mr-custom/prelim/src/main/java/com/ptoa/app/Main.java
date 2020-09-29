@@ -66,7 +66,8 @@ public class Main {
 	}
 	boolean deltaEncoding = false;
     InputFile in = HadoopInputFile.fromPath(new Path(args[0]), conf);
-    Path destPath = new Path(args[1]);
+    Path destPath = new Path(args[1] + ".prq");
+    Path destPath_snappy = new Path(args[1] + "_snappy.prq");
 
     ParquetFileReader reader = new ParquetFileReader(in, new ParquetReadOptions.Builder().build());
     ParquetMetadata readFooter = reader.getFooter();
@@ -88,6 +89,8 @@ public class Main {
 
     File t = new File(destPath.toString());
     t.delete();
+    File t_snappy = new File(destPath_snappy.toString());
+    t_snappy.delete();
 
     //GroupWriteSupport.setSchema(schema, conf);
     //ParquetProperties.Builder encodingPropsBuilder = ParquetProperties.builder();
@@ -120,6 +123,17 @@ public class Main {
                  .withValuesWriterFactory(customV2Factory)
                  .withWriterVersion(WriterVersion.PARQUET_1_0);
     ParquetWriter<Group> writer = writerBuilder.build();
+    CustomBuilder snappywriterBuilder = new CustomBuilder(destPath_snappy);
+    snappywriterBuilder.withSchema(schema, conf)
+    .withCompressionCodec(CompressionCodecName.SNAPPY)
+    .withRowGroupSize(Integer.MAX_VALUE)
+    .withPageSize(pageSize)
+    .withPageRowCountLimit(pageSize)
+    .withDictionaryEncoding(false)
+    .withValidation(false)
+    .withValuesWriterFactory(customV2Factory)
+    .withWriterVersion(WriterVersion.PARQUET_1_0);
+    ParquetWriter<Group> snappywriter = snappywriterBuilder.build();
 
     try {
       while (null != (pages = reader.readNextRowGroup())) {
@@ -131,6 +145,7 @@ public class Main {
         for (int i = 0; i < rows; i++) {
           Group g = (Group) recordReader.read();
           writer.write(g);
+          snappywriter.write(g);
         }
       }
     } finally {
@@ -138,6 +153,7 @@ public class Main {
 
       reader.close();
       writer.close();
+      snappywriter.close();
     }
     /*
     try{

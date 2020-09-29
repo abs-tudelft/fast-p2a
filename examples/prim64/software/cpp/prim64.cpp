@@ -292,7 +292,8 @@ int main(int argc, char **argv) {
         error_count++;
       }
       if(i<20) {
-        std::cout << result_array->Value(i) << " " << correct_array->Value(i) << std::endl;
+//        std::cout << result_array->Value(i) << " " << correct_array->Value(i) << std::endl;
+    	  printf("\t0x%016X\t\t0x%016X\n", result_array->Value(i), correct_array->Value(i));
       }
     }
 
@@ -304,6 +305,15 @@ int main(int argc, char **argv) {
       std::cout << "Test passed!" << std::endl;
     } else {
       std::cout << "Test failed. Found " << error_count << " errors in the output Arrow array" << std::endl;
+      if (error_count <= 100) {
+    	printf("Printing %d errors (index: \tresult\t\texpected)\n\n", error_count);
+
+    	  for(int i=0; i<result_array->length(); i++) {
+			if(result_array->Value(i) != correct_array->Value(i)) {
+			  printf("%d: \t0x%016X\t\t0x%016X\n", i, result_array->Value(i), correct_array->Value(i));
+			}
+    	  }
+      }
     }
   }
 

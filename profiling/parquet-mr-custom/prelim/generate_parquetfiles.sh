@@ -28,14 +28,16 @@ for datatype in int32 int64 str; do
         size_entries=$((size_bytes/entrysize))
 		echo "Generating $datatype files of size $fulldatasize bytes and pagesize $size_bytes bytes ($size_entries entries)"
 		echo "./run.sh test_${datatype}.prq test_${datatype}_ps${size_bytes}_plain.prq $size_entries plain"
-		./run.sh test_${datatype}.prq test_${datatype}_ps${size_bytes}_plain.prq $size_entries plain
+		./run.sh test_${datatype}.prq test_${datatype}_ps${size_bytes}_plain $size_entries plain
 		$parquetdebug test_${datatype}_ps${size_bytes}_plain.prq plain
 		mv test_${datatype}_ps${size_bytes}_plain.prq $outdir
+		mv test_${datatype}_ps${size_bytes}_plain_snappy.prq $outdir
 		if [ $datatype != "str" ]; then
 			echo "./run.sh test_${datatype}.prq test_${datatype}_ps${size_bytes}_delta.prq $size_entries delta"
-			./run.sh test_${datatype}.prq test_${datatype}_ps${size_bytes}_delta.prq $size_entries delta
+			./run.sh test_${datatype}.prq test_${datatype}_ps${size_bytes}_delta $size_entries delta
 			$parquetdebug test_${datatype}_ps${size_bytes}_delta.prq delta
 			mv test_${datatype}_ps${size_bytes}_delta.prq $outdir
+			mv test_${datatype}_ps${size_bytes}_delta_snappy.prq $outdir
 		fi
 	done
 	if [ "$datatype" == "str" ]; then
