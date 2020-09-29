@@ -188,8 +188,8 @@ begin
       INDEX_WIDTH                              => INDEX_WIDTH,
       ---------------------------------------------------------------------------------
       TAG_WIDTH                                => TAG_WIDTH,
-      CFG                                      => "prim(64;epc=8)",
-      ENCODING                                 => "DELTA",
+      CFG                                      => "prim(64;epc=16)",
+      ENCODING                                 => "PLAIN",
       COMPRESSION_CODEC                        => "UNCOMPRESSED"
     )
     port map(
@@ -229,7 +229,7 @@ begin
       BUS_LEN_WIDTH                            => BUS_LEN_WIDTH,
       BUS_DATA_WIDTH                           => BUS_DATA_WIDTH,
       NUM_SLAVE_PORTS                          => 1,
-      MAX_OUTSTANDING                          => 16
+      MAX_OUTSTANDING                          => 32
     )
     port map (
       bcd_clk                                  => bus_clk,
@@ -261,7 +261,7 @@ begin
       BUS_LEN_WIDTH                            => BUS_LEN_WIDTH,
       BUS_DATA_WIDTH                           => BUS_DATA_WIDTH,
       NUM_SLAVE_PORTS                          => 1,
-      MAX_OUTSTANDING                          => 16
+      MAX_OUTSTANDING                          => 32
     )
     port map (
       bcd_clk                                  => bus_clk,

@@ -47,13 +47,13 @@ entity action_fletcher is
         -- Parameters of Axi Master Bus Interface AXI_HOST_MEM ; to Host memory
         C_AXI_HOST_MEM_ID_WIDTH      : integer   := 5;
         C_AXI_HOST_MEM_ADDR_WIDTH    : integer   := 64;
-        C_AXI_HOST_MEM_DATA_WIDTH    : integer   := 512;
-        C_AXI_HOST_MEM_AWUSER_WIDTH  : integer   := 8;
-        C_AXI_HOST_MEM_ARUSER_WIDTH  : integer   := 8;
+        C_AXI_HOST_MEM_DATA_WIDTH    : integer   := 1024;
+        C_AXI_HOST_MEM_AWUSER_WIDTH  : integer   := 9;
+        C_AXI_HOST_MEM_ARUSER_WIDTH  : integer   := 9;
         C_AXI_HOST_MEM_WUSER_WIDTH   : integer   := 1;
         C_AXI_HOST_MEM_RUSER_WIDTH   : integer   := 1;
         C_AXI_HOST_MEM_BUSER_WIDTH   : integer   := 1;
-        INT_BITS                     : integer   := 64;
+        INT_BITS                     : integer   := 3;
         CONTEXT_BITS                 : integer   := 9
     );
     port (
@@ -439,7 +439,7 @@ begin
   ----------------------------------------------------------------------
   -- Read channel defaults:
   -- ARSIZE must be set to 512 bits
-  s_axi_host_mem_arsize           <= "110"; -- 512 bit beats
+  s_axi_host_mem_arsize           <= "111"; -- 512 bit beats
   s_axi_host_mem_arburst          <= "01"; -- incremental
   
   s_axi_host_mem_arid             <= (others => '0');
@@ -451,7 +451,7 @@ begin
   
   -- Write channel defaults:
   -- AWSIZE must be set to 512 bits
-  s_axi_host_mem_awsize           <= "110"; -- 512 bit beats
+  s_axi_host_mem_awsize           <= "111"; -- 512 bit beats
   s_axi_host_mem_awburst          <= "01"; -- incremental
   
   s_axi_host_mem_awid             <= (others => '0');

@@ -43,7 +43,7 @@ CONSTANT    C_S_AXI_CTRL_REG_ADDR_WIDTH      : integer   := 32;
     -- Parameters for Axi Master Bus Interface AXI_HOST_MEM : to Host memory
 CONSTANT    C_M_AXI_HOST_MEM_ID_WIDTH        : integer   := 5;
 CONSTANT    C_M_AXI_HOST_MEM_ADDR_WIDTH      : integer   := 64;
-CONSTANT    C_M_AXI_HOST_MEM_DATA_WIDTH      : integer   := 512;
+CONSTANT    C_M_AXI_HOST_MEM_DATA_WIDTH      : integer   := 1024;
 CONSTANT    C_M_AXI_HOST_MEM_AWUSER_WIDTH    : integer   := 9;
 CONSTANT    C_M_AXI_HOST_MEM_ARUSER_WIDTH    : integer   := 9;
 CONSTANT    C_M_AXI_HOST_MEM_WUSER_WIDTH     : integer   := 1;
