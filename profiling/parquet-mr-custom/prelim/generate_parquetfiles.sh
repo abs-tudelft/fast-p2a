@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Generate parquet files with
 # DataTypes int32, int64, str
@@ -10,8 +11,8 @@ outdir=/data/parquetfiles/new
 parquetwriter=~/workspaces/openCAPI/fast-p2a/software/cpp/test/parquetwriter_test
 parquetdebug=~/workspaces/openCAPI/fast-p2a/profiling/cpp-benchmarks/pagecounter/debug/pagecounter
 
-rm *.prq
-mkdir $outdir
+rm *.prq || true
+mkdir -p $outdir
 
 for datatype in int32 int64 str; do
 	if [ "$datatype" == "int32" ]; then

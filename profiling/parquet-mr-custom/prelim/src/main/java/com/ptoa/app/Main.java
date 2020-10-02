@@ -3,10 +3,12 @@ package com.ptoa.app;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.parquet.ParquetReadOptions;
+import org.apache.parquet.column.ParquetProperties;
 import org.apache.parquet.column.ParquetProperties.WriterVersion;
 import org.apache.parquet.column.page.PageReadStore;
 import org.apache.parquet.column.values.factory.ValuesWriterFactory;
@@ -53,10 +55,21 @@ public class Main {
     }
 
     public CustomBuilder withValuesWriterFactory(ValuesWriterFactory factory) {
-      this.encodingPropsBuilder.withValuesWriterFactory(factory);
-      return self();
-    }
+        try {
+            // get private field 'encodingPropsBuilder' of ParquetWriter.Builder by using Java Reflection API
+            Field encodingPropsBuilderField = ParquetWriter.Builder.class.getDeclaredField("encodingPropsBuilder");
+            encodingPropsBuilderField.setAccessible(true);
+            ParquetProperties.Builder encodingPropsBuilder = (ParquetProperties.Builder) encodingPropsBuilderField
+                    .get(this);
 
+
+            encodingPropsBuilder.withValuesWriterFactory(factory);
+            return self();
+
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
   }
 
   public static void main(String[] args) throws IOException {
@@ -73,7 +86,7 @@ public class Main {
     MessageType schema = readFooter.getFileMetaData().getSchema();
     PageReadStore pages = null;
     
-    int pageSize = Integer.valueOf(args[2]);
+    int pageSize = Integer.parseInt(args[2]);
     if (args.length >= 4 && args[3].contentEquals("delta")) {
     	deltaEncoding = true;
     }
